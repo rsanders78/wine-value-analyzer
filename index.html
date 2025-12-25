@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <title>Wine Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #000;
+        color: #fff;
+        padding-bottom: 60px;
+    }
+
+    .header {
+        padding: 20px;
+        background: #000;
+        border-bottom: 1px solid #222;
+    }
+
+    .header h1 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .header p {
+        font-size: 14px;
+        color: #888;
+        margin-top: 4px;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .card {
+        background: #111;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #222;
+    }
+
+    .card-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+
+    .options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .option {
+        background: #1a1a1a;
+        border: 2px solid #333;
+        border-radius: 12px;
+        padding: 16px 8px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .option.active {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+    }
+
+    .option-emoji {
+        font-size: 24px;
+        margin-bottom: 4px;
+    }
+
+    .option-label {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .info-box {
+        background: #0a0a0a;
+        border-radius: 12px;
+        padding: 16px;
+        font-size: 13px;
+        color: #ccc;
+    }
+
+    .btn {
+        width: 100%;
+        background: #fff;
+        color: #000;
+        border: none;
+        border-radius: 16px;
+        padding: 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .btn:active {
+        opacity: 0.8;
+    }
+
+    .btn-secondary {
+        background: #1a1a1a;
+        color: #fff;
+        border: 1px solid #333;
+    }
+
+    .thumbnails {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+
+    .thumb {
+        position: relative;
+        aspect-ratio: 3/4;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 2px solid #333;
+    }
+
+    .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .thumb-num {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        background: rgba(0,0,0,0.7);
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+    }
+
+    .thumb-remove {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: #f44;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-analyze {
+        flex: 2;
+    }
+
+    .btn-add {
+        flex: 1;
+    }
+
+    .loading {
+        text-align: center;
+        padding: 40px 20px;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #222;
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .wine {
+        background: #111;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 12px;
+        border: 1px solid #222;
+    }
+
+    .rank-row {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .badge {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #fff;
+        color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .badge-1 { background: linear-gradient(135deg, #ffd700, #ffed4e); }
+    .badge-2 { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); }
+    .badge-3 { background: linear-gradient(135deg, #cd7f32, #e8b67e); }
+
+    .wine h3 {
+        font-size: 18px;
+        margin-bottom: 4px;
+    }
+
+    .wine-meta {
+        font-size: 13px;
+        color: #888;
+        margin-bottom: 2px;
+    }
+
+    .wine-price {
+        font-size: 20px;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .bars {
+        margin: 16px 0;
+    }
+
+    .bar {
+        margin-bottom: 12px;
+    }
+
+    .bar-label {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #888;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+
+    .bar-bg {
+        height: 6px;
+        background: #1a1a1a;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        border-radius: 3px;
+    }
+
+    .bar-q { background: #fff; }
+    .bar-v { background: #0f3; }
+
+    .why {
+        font-size: 14px;
+        color: #aaa;
+        line-height: 1.6;
+        padding-top: 12px;
+        border-top: 1px solid #1a1a1a;
+    }
+
+    .error {
+        background: #1a0000;
+        border: 1px solid #330000;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        color: #f44;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    #camera {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 1000;
+        display: none;
+    }
+
+    #video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cam-controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 30px 20px;
+        background: linear-gradient(transparent, rgba(0,0,0,0.8));
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+
+    .capture {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #fff;
+        border: 4px solid #000;
+        cursor: pointer;
+    }
+
+    .done {
+        background: #0f3;
+        color: #000;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .close {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(0,0,0,0.5);
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .page-num {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0,0,0,0.7);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="header">
+        <h1>Wine Analyzer</h1>
+        <p>Find the best value</p>
+    </div>
+
+```
+<div class="container">
+    <div class="card">
+        <div class="card-title">Adventure Mode</div>
+        
+        <div class="options" id="modeOptions">
+            <div class="option active" data-level="1">
+                <div class="option-emoji">🛡️</div>
+                <div class="option-label">Safe</div>
+            </div>
+            <div class="option" data-level="2">
+                <div class="option-emoji">🧭</div>
+                <div class="option-label">Curious</div>
+            </div>
+            <div class="option" data-level="3">
+                <div class="option-emoji">🗺️</div>
+                <div class="option-label">Explorer</div>
+            </div>
+        </div>
+
+        <div class="info-box" id="modeInfo">
+            Reds: Pinot Noir, Gamay<br>
+            Whites: Chablis, Sancerre
+        </div>
+    </div>
+
+    <div id="upload">
+        <button class="btn" id="camBtn">📷 Capture Wine List</button>
+        <button class="btn btn-secondary" id="upBtn">📤 Upload Photos</button>
+        <input type="file" accept="image/*" multiple id="fileInput">
+    </div>
+
+    <div id="captured"></div>
+    <div id="loading"></div>
+    <div id="error"></div>
+    <div id="results"></div>
+</div>
+
+<div id="camera">
+    <button class="close" id="closeCam">×</button>
+    <div class="page-num" id="pageNum">Page 1</div>
+    <video id="video" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none"></canvas>
+    <div class="cam-controls">
+        <button class="done" id="doneBtn" style="display:none;">Done</button>
+        <button class="capture" id="capBtn"></button>
+    </div>
+</div>
+
+<script>
+    const modes = {
+        1: {
+            reds: ['pinot noir', 'gamay', 'burgundy', 'beaujolais', 'chinon'],
+            whites: ['chablis', 'sancerre', 'gruner veltliner', 'grüner veltliner'],
+            boost: 1.2,
+            info: 'Reds: Pinot Noir, Gamay<br>Whites: Chablis, Sancerre'
+        },
+        2: {
+            reds: ['pinot noir', 'gamay', 'grenache', 'barbera', 'dolcetto', 'valpolicella'],
+            whites: ['chablis', 'sancerre', 'albariño', 'verdicchio', 'chenin blanc'],
+            boost: 1.1,
+            info: 'Reds: Pinot, Grenache, Barbera<br>Whites: Chablis, Albariño'
+        },
+        3: {
+            reds: ['tempranillo', 'rioja', 'nebbiolo', 'sangiovese', 'syrah'],
+            whites: ['viognier', 'roussanne', 'chardonnay', 'semillon'],
+            boost: 1.0,
+            info: 'Reds: Tempranillo, Nebbiolo, Syrah<br>Whites: Viognier, Chardonnay'
+        }
+    };
+
+    let level = 1;
+    let pages = [];
+    let stream = null;
+
+    document.querySelectorAll('.option').forEach(opt => {
+        opt.onclick = function() {
+            document.querySelectorAll('.option').forEach(o => o.classList.remove('active'));
+            this.classList.add('active');
+            level = parseInt(this.dataset.level);
+            document.getElementById('modeInfo').innerHTML = modes[level].info;
+        };
+    });
+
+    document.getElementById('camBtn').onclick = openCam;
+    document.getElementById('upBtn').onclick = () => document.getElementById('fileInput').click();
+    document.getElementById('fileInput').onchange = handleFiles;
+    document.getElementById('closeCam').onclick = closeCam;
+    document.getElementById('capBtn').onclick = capture;
+    document.getElementById('doneBtn').onclick = finishCam;
+
+    async function openCam() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { facingMode: 'environment' } 
+            });
+            document.getElementById('video').srcObject = stream;
+            document.getElementById('camera').style.display = 'block';
+            updatePageNum();
+        } catch (err) {
+            alert('Camera denied. Use upload instead.');
+        }
+    }
+
+    function closeCam() {
+        if (stream) stream.getTracks().forEach(t => t.stop());
+        document.getElementById('camera').style.display = 'none';
+        document.getElementById('doneBtn').style.display = 'none';
+    }
+
+    function updatePageNum() {
+        document.getElementById('pageNum').textContent = `Page ${pages.length + 1}`;
+    }
+
+    function capture() {
+        const vid = document.getElementById('video');
+        const can = document.getElementById('canvas');
+        can.width = vid.videoWidth;
+        can.height = vid.videoHeight;
+        can.getContext('2d').drawImage(vid, 0, 0);
+        
+        can.toBlob(blob => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                pages.push(e.target.result);
+                updatePageNum();
+                document.getElementById('doneBtn').style.display = 'block';
+                showPages();
+            };
+            reader.readAsDataURL(blob);
+        }, 'image/jpeg', 0.95);
+    }
+
+    function finishCam() {
+        closeCam();
+        document.getElementById('upload').style.display = 'none';
+    }
+
+    function handleFiles(e) {
+        Array.from(e.target.files).forEach(file => {
+            const reader = new FileReader();
+            reader.onload = e => {
+                pages.push(e.target.result);
+                showPages();
+            };
+            reader.readAsDataURL(file);
+        });
+        document.getElementById('upload').style.display = 'none';
+    }
+
+    function showPages() {
+        const html = `
+            <div class="card">
+                <div class="thumbnails">
+                    ${pages.map((p, i) => `
+                        <div class="thumb">
+                            <img src="${p}">
+                            <div class="thumb-num">${i+1}</div>
+                            <button class="thumb-remove" onclick="removePage(${i})">×</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="actions">
+                    <button class="btn btn-analyze" onclick="analyze()">
+                        Analyze ${pages.length} Page${pages.length > 1 ? 's' : ''}
+                    </button>
+                    <button class="btn btn-secondary btn-add" onclick="addMore()">
+                        + More
+                    </button>
+                </div>
+            </div>
+        `;
+        document.getElementById('captured').innerHTML = html;
+    }
+
+    function removePage(i) {
+        pages.splice(i, 1);
+        if (pages.length === 0) {
+            reset();
+        } else {
+            showPages();
+        }
+    }
+
+    function addMore() {
+        document.getElementById('fileInput').click();
+    }
+
+    function reset() {
+        pages = [];
+        document.getElementById('upload').style.display = 'block';
+        document.getElementById('captured').innerHTML = '';
+        document.getElementById('results').innerHTML = '';
+        document.getElementById('error').innerHTML = '';
+        document.getElementById('fileInput').value = '';
+    }
+
+    async function analyze() {
+        document.getElementById('loading').innerHTML = `
+            <div class="card loading">
+                <div class="spinner"></div>
+                <div>Analyzing ${pages.length} page${pages.length > 1 ? 's' : ''}...</div>
+            </div>
+        `;
+        document.getElementById('error').innerHTML = '';
+        document.getElementById('results').innerHTML = '';
+
+        try {
+            const imgs = pages.map(p => ({
+                type: 'image',
+                source: { type: 'base64', media_type: 'image/jpeg', data: p.split(',')[1] }
+            }));
+
+            const mode = modes[level];
+            const prompt = `Extract ALL wines from these images. For each: name, producer, region, vintage, price, classification.
+```
+
+Analyze based on:
+
+- Appellation hierarchy (village/1er/grand cru)
+- Producer reputation
+- Vintage quality
+- User preference: ${mode.reds.join(’, ‘)}, ${mode.whites.join(’, ’)}
+
+Return TOP 5 by VALUE FOR MONEY (not prestige). Keep reasoning SHORT.
+
+JSON format:
+[{
+“rank”: 1,
+“name”: “Wine”,
+“producer”: “Producer”,
+“region”: “Region”,
+“vintage”: “2020”,
+“price”: “45”,
+“classification”: “Grand Cru”,
+“qualityScore”: 85,
+“valueScore”: 90,
+“why”: “Brief reason”
+}]`;
+
+```
+            const res = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    model: 'claude-sonnet-4-20250514',
+                    max_tokens: 2000,
+                    messages: [{ role: 'user', content: [...imgs, { type: 'text', text: prompt }] }]
+                })
+            });
+
+            const data = await res.json();
+            const text = data.content.find(c => c.type === 'text')?.text || '[]';
+            const match = text.match(/\[[\s\S]*\]/);
+            const wines = match ? JSON.parse(match[0]) : [];
+
+            if (wines.length === 0) throw new Error('No wines found');
+            
+            showResults(wines);
+        } catch (err) {
+            document.getElementById('error').innerHTML = `
+                <div class="card error">
+                    Failed to analyze. Try clearer images.
+                </div>
+            `;
+        } finally {
+            document.getElementById('loading').innerHTML = '';
+        }
+    }
+
+    function showResults(wines) {
+        const html = wines.map((w, i) => {
+            const bc = i === 0 ? 'badge-1' : i === 1 ? 'badge-2' : i === 2 ? 'badge-3' : '';
+            return `
+                <div class="wine">
+                    <div class="rank-row">
+                        <div class="badge ${bc}">${w.rank || i+1}</div>
+                        <div>
+                            <h3>${w.name}</h3>
+                            <div class="wine-meta">${w.producer} • ${w.vintage}</div>
+                            <div class="wine-meta">${w.region}${w.classification ? ' • ' + w.classification : ''}</div>
+                            <div class="wine-price">£${w.price}</div>
+                        </div>
+                    </div>
+                    <div class="bars">
+                        <div class="bar">
+                            <div class="bar-label">
+                                <span>Quality</span>
+                                <span>${w.qualityScore}/100</span>
+                            </div>
+                            <div class="bar-bg">
+                                <div class="bar-fill bar-q" style="width:${w.qualityScore}%"></div>
+                            </div>
+                        </div>
+                        <div class="bar">
+                            <div class="bar-label">
+                                <span>Value</span>
+                                <span>${w.valueScore}/100</span>
+                            </div>
+                            <div class="bar-bg">
+                                <div class="bar-fill bar-v" style="width:${w.valueScore}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="why"><strong>Why:</strong> ${w.why}</div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('results').innerHTML = html + `
+            <button class="btn" onclick="reset()" style="margin-top:20px;">
+                Scan Another List
+            </button>
+        `;
+    }
+</script>
+```
+
+</body>
+</html>
